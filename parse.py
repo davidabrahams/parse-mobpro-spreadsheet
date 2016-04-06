@@ -17,11 +17,21 @@ availability_dict = {}
 for c in combs:
     print c
     print timestamp_dict[c[0]]
-    availability_dict[c] = tuple(set(timestamp_dict[c[0]]) & set(timestamp_dict[c[1]]))
+    availability_dict[c] = tuple(set(timestamp_dict[c[0]]) & set(
+                                 timestamp_dict[c[1]]))
 
-print availability_dict
+# print availability_dict
 
-best_times = sorted(availability_dict.items(), key=lambda x: len(x[1]), reverse=True)
+def get_time_score(dudes):
+    res = sum(get_person_weight(i) for i in dudes)
+    return res
 
-for time, dudes in best_times:
-    print time, dudes
+def get_person_weight(i):
+    sureness = df.loc[i][2]
+    return (sureness + 1) / 2.0
+
+best_times = sorted(availability_dict.items(), key=lambda x: get_time_score(
+                    x[1]), reverse=True)
+
+for time, dudes in best_times[0:20]:
+    print time, dudes, get_time_score(dudes)
